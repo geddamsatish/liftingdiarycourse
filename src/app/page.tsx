@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { SignInButton, SignUpButton, UserButton, Show } from "@clerk/nextjs";
+import { DashboardRedirect } from "./dashboard-redirect";
 
 export default function Home() {
   return (
@@ -29,6 +30,7 @@ export default function Home() {
             </div>
           </Show>
           <Show when="signed-in">
+            <DashboardRedirect />
             <UserButton />
           </Show>
         </div>
