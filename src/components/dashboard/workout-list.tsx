@@ -62,7 +62,7 @@ export function WorkoutList({
       const dateString = date.toISOString().split('T')[0];
       const newWorkouts = await onDateChange(dateString);
       setWorkouts(newWorkouts);
-    } catch (err) {
+    } catch {
       setError("Failed to load workouts for this date");
       setWorkouts([]);
     } finally {
