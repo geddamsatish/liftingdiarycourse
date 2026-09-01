@@ -20,7 +20,7 @@ export default async function EditWorkoutPage({
 
   const result = await getWorkoutAction(workoutIdNumber);
 
-  if (!result.success) {
+  if (!result.success || !result.data) {
     redirect("/dashboard");
   }
 
@@ -40,8 +40,8 @@ export default async function EditWorkoutPage({
 
         <EditWorkoutForm
           workoutId={workoutIdNumber}
-          initialName={workout.name}
-          initialDate={new Date(workout.date)}
+          initialName={workout?.name ?? null}
+          initialDate={workout ? new Date(workout.date) : new Date()}
         />
       </div>
     </div>

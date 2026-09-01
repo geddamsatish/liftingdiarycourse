@@ -68,7 +68,7 @@ export function EditWorkoutForm({
       });
 
       if (!result.success) {
-        setError(result.error);
+        setError(result.error || "Failed to update workout");
       } else {
         router.push("/dashboard");
       }

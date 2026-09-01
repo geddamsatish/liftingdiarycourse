@@ -63,7 +63,7 @@ export function CreateWorkoutForm({ initialDate }: CreateWorkoutFormProps) {
       });
 
       if (!result.success) {
-        setError(result.error);
+        setError(result.error || "Failed to create workout");
       } else {
         router.push("/dashboard");
       }
