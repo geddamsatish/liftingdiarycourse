@@ -8,6 +8,99 @@ import {
 } from "@/db/schema";
 import { eq, and, gte, lt } from "drizzle-orm";
 
+export async function createWorkout(data: {
+  name?: string;
+  date: Date;
+}) {
+  const user = await getCurrentUser();
+  if (!user) throw new Error("Unauthorized");
+
+  const result = await db
+    .insert(workoutsTable)
+    .values({
+      userId: user.id,
+      name: data.name || null,
+      date: data.date,
+    })
+    .returning();
+
+  return result[0];
+}
+
+export async function getWorkoutById(id: number) {
+  const user = await getCurrentUser();
+  if (!user) throw new Error("Unauthorized");
+
+  const workout = await db
+    .select()
+    .from(workoutsTable)
+    .where(and(eq(workoutsTable.id, id), eq(workoutsTable.userId, user.id)))
+    .then((rows) => rows[0]);
+
+  if (!workout) throw new Error("Workout not found or unauthorized");
+
+  const exercises = await db
+    .select()
+    .from(workoutExercisesTable)
+    .innerJoin(
+      exercisesTable,
+      eq(workoutExercisesTable.exerciseId, exercisesTable.id)
+    )
+    .where(eq(workoutExercisesTable.workoutId, workout.id));
+
+  const exercisesWithSets = await Promise.all(
+    exercises.map(async ({ workout_exercises, exercises }) => {
+      const sets = await db
+        .select()
+        .from(setsTable)
+        .where(eq(setsTable.workoutExerciseId, workout_exercises.id));
+
+      return {
+        id: exercises.id,
+        name: exercises.name,
+        sets: sets.map((set) => ({
+          setNumber: set.setNumber,
+          reps: set.reps,
+          weight: parseFloat(set.weight as string),
+        })),
+      };
+    })
+  );
+
+  return {
+    id: workout.id,
+    name: workout.name,
+    date: workout.date,
+    exercises: exercisesWithSets,
+  };
+}
+
+export async function updateWorkout(
+  id: number,
+  data: {
+    name?: string;
+    date?: Date;
+  }
+) {
+  const user = await getCurrentUser();
+  if (!user) throw new Error("Unauthorized");
+
+  const workout = await db
+    .select()
+    .from(workoutsTable)
+    .where(and(eq(workoutsTable.id, id), eq(workoutsTable.userId, user.id)))
+    .then((rows) => rows[0]);
+
+  if (!workout) throw new Error("Workout not found or unauthorized");
+
+  await db
+    .update(workoutsTable)
+    .set({
+      ...(data.name !== undefined && { name: data.name || null }),
+      ...(data.date !== undefined && { date: data.date }),
+    })
+    .where(eq(workoutsTable.id, id));
+}
 export async function getWorkoutsByDate(date: Date) {
   const user = await getCurrentUser();
   if (!user) throw new Error("Unauthorized");
