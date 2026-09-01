@@ -22,14 +22,19 @@ interface EditWorkoutFormProps {
   workoutId: number;
   initialName: string | null;
   initialDate: Date;
+  returnDate?: string;
 }
 
 export function EditWorkoutForm({
   workoutId,
   initialName,
   initialDate,
+  returnDate,
 }: EditWorkoutFormProps) {
   const router = useRouter();
+  const dashboardHref = returnDate
+    ? `/dashboard?date=${returnDate}`
+    : "/dashboard";
   const [name, setName] = useState(initialName || "");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [startDateTime, setStartDateTime] = useState<Date>(initialDate);
@@ -70,7 +75,7 @@ export function EditWorkoutForm({
       if (!result.success) {
         setError(result.error || "Failed to update workout");
       } else {
-        router.push("/dashboard");
+        router.push(dashboardHref);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error");
@@ -150,7 +155,7 @@ export function EditWorkoutForm({
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.back()}
+              onClick={() => router.push(dashboardHref)}
               disabled={isLoading}
               className="flex-1"
             >

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 
@@ -50,6 +51,8 @@ export function WorkoutList({
   const formatDateWithOrdinal = (date: Date) => {
     return format(date, "do MMM yyyy");
   };
+
+  const toDateParam = (date: Date) => date.toISOString().split("T")[0];
 
   const handleDateChange = async (date: Date | undefined) => {
     if (!date) return;
@@ -121,8 +124,12 @@ export function WorkoutList({
             ) : workouts.length > 0 ? (
               <div className="space-y-4">
                 {workouts.map((workout) => (
-                  <div key={workout.id}>
-                    <div className="p-4 bg-slate-100 dark:bg-slate-800 rounded-lg mb-3">
+                  <Link
+                    key={workout.id}
+                    href={`/dashboard/workout/${workout.id}?date=${toDateParam(selectedDate)}`}
+                    className="block"
+                  >
+                    <div className="p-4 bg-slate-100 dark:bg-slate-800 rounded-lg mb-3 transition-colors hover:bg-slate-200 dark:hover:bg-slate-700">
                       <h3 className="font-semibold text-slate-900 dark:text-slate-50 mb-3">
                         {workout.name || "Untitled Workout"}
                       </h3>
@@ -150,7 +157,7 @@ export function WorkoutList({
                         ))}
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             ) : (
