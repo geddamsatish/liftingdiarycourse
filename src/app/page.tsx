@@ -1,6 +1,6 @@
 import Image from "next/image";
-import Link from "next/link";
 import { SignInButton, SignUpButton, UserButton, Show } from "@clerk/nextjs";
+import { DashboardRedirect } from "./dashboard-redirect";
 
 export default function Home() {
   return (
@@ -30,15 +30,8 @@ export default function Home() {
             </div>
           </Show>
           <Show when="signed-in">
-            <div className="flex items-center gap-3">
-              <Link
-                href="/dashboard"
-                className="px-6 py-2 rounded-lg bg-black text-white dark:bg-white dark:text-black font-medium transition-all hover:opacity-90 active:scale-95"
-              >
-                Go to Dashboard
-              </Link>
-              <UserButton />
-            </div>
+            <DashboardRedirect />
+            <UserButton />
           </Show>
         </div>
         <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
