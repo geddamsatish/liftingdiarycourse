@@ -89,7 +89,7 @@ export async function getWorkouts() {
 export async function getWorkoutById(id: string) {
   const user = await getCurrentUser()
   if (!user) throw new Error('Unauthorized')
-  
+   
   return db
     .select()
     .from(workouts)

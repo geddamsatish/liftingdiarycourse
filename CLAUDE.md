@@ -24,7 +24,8 @@ This is a **Lifting Diary** web application built with Next.js 16, React 19, Typ
 - Code standards and best practices
 
 **Available Documentation:**
-- `docs/ui.md` — UI component standards, shadcn/ui usage, date formatting, styling rules
+- `/docs/ui.md` — UI component standards, shadcn/ui usage, date formatting, styling rules
+- `/docs/data-fetching.md` - 
 
 
 ## Common Development Commands
