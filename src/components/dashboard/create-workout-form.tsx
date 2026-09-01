@@ -20,10 +20,17 @@ import { createWorkoutAction } from "@/app/dashboard/actions";
 
 interface CreateWorkoutFormProps {
   initialDate?: Date;
+  returnDate?: string;
 }
 
-export function CreateWorkoutForm({ initialDate }: CreateWorkoutFormProps) {
+export function CreateWorkoutForm({
+  initialDate,
+  returnDate,
+}: CreateWorkoutFormProps) {
   const router = useRouter();
+  const dashboardHref = returnDate
+    ? `/dashboard?date=${returnDate}`
+    : "/dashboard";
   const [name, setName] = useState("");
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [startDateTime, setStartDateTime] = useState<Date>(
@@ -65,7 +72,7 @@ export function CreateWorkoutForm({ initialDate }: CreateWorkoutFormProps) {
       if (!result.success) {
         setError(result.error || "Failed to create workout");
       } else {
-        router.push("/dashboard");
+        router.push(dashboardHref);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error");
@@ -145,7 +152,7 @@ export function CreateWorkoutForm({ initialDate }: CreateWorkoutFormProps) {
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.back()}
+              onClick={() => router.push(dashboardHref)}
               disabled={isLoading}
               className="flex-1"
             >

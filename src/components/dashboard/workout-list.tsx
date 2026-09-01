@@ -5,7 +5,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -105,8 +105,14 @@ export function WorkoutList({
 
       <div className="lg:col-span-3">
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between gap-4">
             <CardTitle>Workouts - {formatDateWithOrdinal(selectedDate)}</CardTitle>
+            <Link
+              href={`/dashboard/workout/new?date=${toDateParam(selectedDate)}`}
+              className={cn(buttonVariants({ size: "sm" }))}
+            >
+              Log New Workout
+            </Link>
           </CardHeader>
           <CardContent>
             {isLoading ? (
