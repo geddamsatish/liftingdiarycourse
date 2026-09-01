@@ -25,7 +25,9 @@ This is a **Lifting Diary** web application built with Next.js 16, React 19, Typ
 
 **Available Documentation:**
 - `/docs/ui.md` — UI component standards, shadcn/ui usage, date formatting, styling rules
-- `/docs/data-fetching.md` - 
+- `/docs/data-fetching.md` — Server Component patterns, database querying, data isolation, security
+- `/docs/auth.md` — Clerk authentication setup, user access patterns, security best practices
+- `/docs/data-mutations.md` 
 
 
 ## Common Development Commands

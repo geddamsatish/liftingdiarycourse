@@ -6,8 +6,7 @@ export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   const today = new Date();
-  const todayString = today.toISOString().split('T')[0];
-  const initialWorkouts = await getWorkoutsByDate(todayString);
+  const initialWorkouts = await getWorkoutsByDate(today);
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 p-4 md:p-8">

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { Calendar as CalendarIcon, Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -42,6 +43,7 @@ export function WorkoutList({
   initialDate,
   onDateChange,
 }: WorkoutListProps) {
+  const router = useRouter();
   const [selectedDate, setSelectedDate] = useState<Date>(initialDate);
   const [workouts, setWorkouts] = useState<Workout[]>(initialWorkouts);
   const [isLoading, setIsLoading] = useState(false);
@@ -154,10 +156,17 @@ export function WorkoutList({
                 ))}
               </div>
             ) : (
-              <div className="flex items-center justify-center py-12">
+              <div className="flex flex-col items-center justify-center py-12 gap-4">
                 <p className="text-slate-500 dark:text-slate-400">
                   No workouts logged for this date
                 </p>
+                <Button
+                  onClick={() => router.push("/dashboard/workout/new")}
+                  className="gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  Log Workout
+                </Button>
               </div>
             )}
           </CardContent>

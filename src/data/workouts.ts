@@ -8,6 +8,25 @@ import {
 } from "@/db/schema";
 import { eq, and, gte, lt } from "drizzle-orm";
 
+export async function createWorkout(data: {
+  name?: string;
+  date: Date;
+}) {
+  const user = await getCurrentUser();
+  if (!user) throw new Error("Unauthorized");
+
+  const result = await db
+    .insert(workoutsTable)
+    .values({
+      userId: user.id,
+      name: data.name || null,
+      date: data.date,
+    })
+    .returning();
+
+  return result[0];
+}
+
 export async function getWorkoutsByDate(date: Date) {
   const user = await getCurrentUser();
   if (!user) throw new Error("Unauthorized");
