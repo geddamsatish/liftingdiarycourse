@@ -24,7 +24,7 @@ export default async function NewWorkoutPage({
             New Workout
           </h1>
           <p className="text-slate-600 dark:text-slate-400 mt-2">
-            Start logging your workout by entering a name, date and start time.
+            Start logging your workout by entering a name and start time.
           </p>
         </div>
 

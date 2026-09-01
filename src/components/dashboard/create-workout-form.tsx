@@ -25,10 +25,31 @@ interface CreateWorkoutFormProps {
 export function CreateWorkoutForm({ initialDate }: CreateWorkoutFormProps) {
   const router = useRouter();
   const [name, setName] = useState("");
-  const [date, setDate] = useState<Date>(initialDate || new Date());
-  const [time, setTime] = useState("09:00");
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [startDateTime, setStartDateTime] = useState<Date>(
+    initialDate || new Date()
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const handleDateSelect = (newDate: Date | undefined) => {
+    if (newDate) {
+      const combined = new Date(newDate);
+      combined.setHours(
+        startDateTime.getHours(),
+        startDateTime.getMinutes()
+      );
+      setStartDateTime(combined);
+      setShowDatePicker(false);
+    }
+  };
+
+  const handleTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const [hours, minutes] = e.target.value.split(":").map(Number);
+    const updated = new Date(startDateTime);
+    updated.setHours(hours, minutes, 0, 0);
+    setStartDateTime(updated);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,13 +57,9 @@ export function CreateWorkoutForm({ initialDate }: CreateWorkoutFormProps) {
     setError(null);
 
     try {
-      const [hours, minutes] = time.split(":").map(Number);
-      const dateWithTime = new Date(date);
-      dateWithTime.setHours(hours, minutes, 0, 0);
-
       const result = await createWorkoutAction({
         name: name || undefined,
-        date: dateWithTime.toISOString(),
+        date: startDateTime.toISOString(),
       });
 
       if (!result.success) {
@@ -77,43 +94,38 @@ export function CreateWorkoutForm({ initialDate }: CreateWorkoutFormProps) {
           </div>
 
           <div className="space-y-2">
-            <Label>Date</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !date && "text-muted-foreground"
-                  )}
-                  disabled={isLoading}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {format(date, "do MMM yyyy")}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={date}
-                  onSelect={(newDate) => {
-                    if (newDate) setDate(newDate);
-                  }}
-                  disabled={isLoading}
-                />
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="time">Start Time</Label>
-            <Input
-              id="time"
-              type="time"
-              value={time}
-              onChange={(e) => setTime(e.target.value)}
-              disabled={isLoading}
-            />
+            <Label>Start Time</Label>
+            <div className="space-y-3">
+              <Popover open={showDatePicker} onOpenChange={setShowDatePicker}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={cn(
+                      "w-full justify-start text-left font-normal",
+                      !startDateTime && "text-muted-foreground"
+                    )}
+                    disabled={isLoading}
+                  >
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {format(startDateTime, "do MMM yyyy")}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={startDateTime}
+                    onSelect={handleDateSelect}
+                    disabled={isLoading}
+                  />
+                </PopoverContent>
+              </Popover>
+              <Input
+                type="time"
+                value={format(startDateTime, "HH:mm")}
+                onChange={handleTimeChange}
+                disabled={isLoading}
+              />
+            </div>
           </div>
 
           {error && (
