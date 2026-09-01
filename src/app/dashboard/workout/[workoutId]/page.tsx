@@ -6,12 +6,17 @@ interface EditWorkoutPageProps {
   params: Promise<{
     workoutId: string;
   }>;
+  searchParams: Promise<{
+    date?: string;
+  }>;
 }
 
 export default async function EditWorkoutPage({
   params,
+  searchParams,
 }: EditWorkoutPageProps) {
   const { workoutId } = await params;
+  const { date } = await searchParams;
   const workoutIdNumber = parseInt(workoutId, 10);
 
   if (isNaN(workoutIdNumber)) {
@@ -27,7 +32,7 @@ export default async function EditWorkoutPage({
   const workout = result.data;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-6">
+    <div className="p-6">
       <div className="max-w-4xl mx-auto">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50">
@@ -42,6 +47,7 @@ export default async function EditWorkoutPage({
           workoutId={workoutIdNumber}
           initialName={workout?.name ?? null}
           initialDate={workout ? new Date(workout.date) : new Date()}
+          returnDate={date}
         />
       </div>
     </div>
