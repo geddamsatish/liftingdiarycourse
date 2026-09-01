@@ -19,6 +19,7 @@
 - **DO NOT** perform mutations in Client Components
 - **DO NOT** use raw SQL queries
 - **DO NOT** bypass user ownership checks
+- **DO NOT** use `redirect()` from `next/navigation` inside Server Actions
 
 ### ✅ What TO Do
 
@@ -28,6 +29,7 @@
 - **ALWAYS** validate inputs with Zod schemas
 - **ALWAYS** verify user ownership before mutations
 - **ALWAYS** use Drizzle ORM for database operations
+- **ALWAYS** handle redirects client-side after Server Action resolves
 
 ## Architecture Overview
 
@@ -235,7 +237,77 @@ export async function deleteWorkoutAction(input: DeleteWorkoutInput) {
 }
 ```
 
-## Pattern 3: Using Server Actions in Forms
+## Pattern 3: Handling Redirects (Client-Side Only)
+
+**RULE: NEVER use `redirect()` from `next/navigation` inside Server Actions.**
+
+Redirects must be handled by the Client Component after the Server Action resolves. This allows:
+- Proper error handling before redirecting
+- User feedback on success/failure
+- Conditional navigation based on response
+
+### ❌ WRONG - Using redirect() in Server Action
+
+```typescript
+// ❌ DO NOT DO THIS
+import { redirect } from 'next/navigation'
+
+export async function createWorkoutAction(input: CreateWorkoutInput) {
+  try {
+    await createWorkout(input)
+    revalidatePath('/dashboard')
+    redirect('/dashboard') // ❌ WRONG - redirects inside Server Action
+  } catch (error) {
+    return { success: false, error: error.message }
+  }
+}
+```
+
+### ✅ CORRECT - Client-Side Redirect After Server Action
+
+```typescript
+// Server Action - Only returns success/error status
+export async function createWorkoutAction(input: CreateWorkoutInput) {
+  try {
+    await createWorkout(input)
+    revalidatePath('/dashboard')
+    return { success: true }
+  } catch (error) {
+    return { 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error'
+    }
+  }
+}
+
+// Client Component - Handles redirect after Server Action resolves
+'use client'
+
+import { useRouter } from 'next/navigation'
+
+export function WorkoutForm() {
+  const router = useRouter()
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    
+    const result = await createWorkoutAction({
+      name: formData.name,
+      date: formData.date,
+    })
+
+    if (result.success) {
+      router.push('/dashboard') // ✅ CORRECT - redirect in Client Component
+    } else {
+      setError(result.error)
+    }
+  }
+
+  return <form onSubmit={handleSubmit}>...</form>
+}
+```
+
+## Pattern 4: Using Server Actions in Forms
 
 Call Server Actions with typed arguments from Client Components.
 
@@ -246,6 +318,7 @@ Call Server Actions with typed arguments from Client Components.
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { createWorkoutAction } from '../actions'
 
 type CreateWorkoutInput = {
@@ -255,6 +328,7 @@ type CreateWorkoutInput = {
 }
 
 export function WorkoutForm() {
+  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -274,6 +348,9 @@ export function WorkoutForm() {
 
       if (!result.success) {
         setError(result.error)
+      } else {
+        // ✅ Redirect client-side after successful Server Action
+        router.push('/dashboard')
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error')
