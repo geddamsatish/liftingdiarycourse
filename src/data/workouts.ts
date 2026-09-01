@@ -8,14 +8,15 @@ import {
 } from "@/db/schema";
 import { eq, and, gte, lt } from "drizzle-orm";
 
-export async function getWorkoutsByDate(dateString: string) {
+export async function getWorkoutsByDate(date: Date) {
   const user = await getCurrentUser();
   if (!user) throw new Error("Unauthorized");
 
-  const [year, month, day] = dateString.split('-').map(Number);
+  const startOfDay = new Date(date);
+  startOfDay.setHours(0, 0, 0, 0);
 
-  const startOfDay = new Date(Date.UTC(year, month - 1, day, 0, 0, 0, 0));
-  const endOfDay = new Date(Date.UTC(year, month - 1, day, 23, 59, 59, 999));
+  const endOfDay = new Date(date);
+  endOfDay.setHours(23, 59, 59, 999);
 
   const workouts = await db
     .select()
@@ -30,7 +31,7 @@ export async function getWorkoutsByDate(dateString: string) {
 
   const workoutsWithExercises = await Promise.all(
     workouts.map(async (workout) => {
-      const exercises = await db
+    const exercises = await db
         .select()
         .from(workoutExercisesTable)
         .innerJoin(
