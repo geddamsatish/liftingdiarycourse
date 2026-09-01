@@ -100,6 +100,7 @@ public/
 - **Dark Mode**: The project includes dark mode CSS classes (e.g., `dark:bg-black`) in the Tailwind setup
 - **Responsive Design**: Tailwind breakpoints are used throughout (sm:, md:, etc.)
 - **Next.js Image Optimization**: The `Image` component from `next/image` is used for optimized image loading
+- **Git Commits**: Do NOT add coauthor information (Co-Authored-By) to commit messages
 
 ## When to Start Developing
 

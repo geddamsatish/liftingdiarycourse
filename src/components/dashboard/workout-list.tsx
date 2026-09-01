@@ -161,7 +161,10 @@ export function WorkoutList({
                   No workouts logged for this date
                 </p>
                 <Button
-                  onClick={() => router.push("/dashboard/workout/new")}
+                  onClick={() => {
+                    const dateParam = selectedDate.toISOString();
+                    router.push(`/dashboard/workout/new?date=${dateParam}`);
+                  }}
                   className="gap-2"
                 >
                   <Plus className="h-4 w-4" />

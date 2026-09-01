@@ -18,10 +18,15 @@ import {
 import { cn } from "@/lib/utils";
 import { createWorkoutAction } from "@/app/dashboard/actions";
 
-export function CreateWorkoutForm() {
+interface CreateWorkoutFormProps {
+  initialDate?: Date;
+}
+
+export function CreateWorkoutForm({ initialDate }: CreateWorkoutFormProps) {
   const router = useRouter();
   const [name, setName] = useState("");
-  const [date, setDate] = useState<Date>(new Date());
+  const [date, setDate] = useState<Date>(initialDate || new Date());
+  const [time, setTime] = useState("09:00");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,9 +36,13 @@ export function CreateWorkoutForm() {
     setError(null);
 
     try {
+      const [hours, minutes] = time.split(":").map(Number);
+      const dateWithTime = new Date(date);
+      dateWithTime.setHours(hours, minutes, 0, 0);
+
       const result = await createWorkoutAction({
         name: name || undefined,
-        date: date.toISOString(),
+        date: dateWithTime.toISOString(),
       });
 
       if (!result.success) {
@@ -94,6 +103,17 @@ export function CreateWorkoutForm() {
                 />
               </PopoverContent>
             </Popover>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="time">Start Time</Label>
+            <Input
+              id="time"
+              type="time"
+              value={time}
+              onChange={(e) => setTime(e.target.value)}
+              disabled={isLoading}
+            />
           </div>
 
           {error && (
