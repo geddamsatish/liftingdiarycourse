@@ -135,32 +135,9 @@ export function WorkoutList({
                     className="block"
                   >
                     <div className="p-4 bg-slate-100 dark:bg-slate-800 rounded-lg mb-3 transition-colors hover:bg-slate-200 dark:hover:bg-slate-700">
-                      <h3 className="font-semibold text-slate-900 dark:text-slate-50 mb-3">
+                      <h3 className="font-semibold text-slate-900 dark:text-slate-50">
                         {workout.name || "Untitled Workout"}
                       </h3>
-                      <div className="space-y-2">
-                        {workout.exercises.map((exercise) => (
-                          <div
-                            key={exercise.id}
-                            className="pl-4 border-l-2 border-slate-300 dark:border-slate-600"
-                          >
-                            <p className="font-medium text-slate-900 dark:text-slate-50 text-sm">
-                              {exercise.name}
-                            </p>
-                            <div className="space-y-1 mt-1">
-                              {exercise.sets.map((set) => (
-                                <p
-                                  key={`${exercise.id}-${set.setNumber}`}
-                                  className="text-xs text-slate-600 dark:text-slate-400"
-                                >
-                                  Set {set.setNumber}: {set.reps} reps ×{" "}
-                                  {set.weight} lbs
-                                </p>
-                              ))}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
                     </div>
                   </Link>
                 ))}

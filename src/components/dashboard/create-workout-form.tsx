@@ -64,6 +64,8 @@ export function CreateWorkoutForm({ initialDate }: CreateWorkoutFormProps) {
 
       if (!result.success) {
         setError(result.error || "Failed to create workout");
+      } else if (result.data?.id) {
+        router.push(`/dashboard/workout/${result.data.id}`);
       } else {
         router.push("/dashboard");
       }
