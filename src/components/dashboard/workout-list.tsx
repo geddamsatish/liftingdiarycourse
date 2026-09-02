@@ -47,6 +47,7 @@ export function WorkoutList({
   const [workouts, setWorkouts] = useState<Workout[]>(initialWorkouts);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
   const formatDateWithOrdinal = (date: Date) => {
     return format(date, "do MMM yyyy");
@@ -57,6 +58,7 @@ export function WorkoutList({
   const handleDateChange = async (date: Date | undefined) => {
     if (!date) return;
     setSelectedDate(date);
+    setIsCalendarOpen(false);
     setIsLoading(true);
     setError(null);
     try {
@@ -78,7 +80,7 @@ export function WorkoutList({
           <CardTitle className="text-lg">Select Date</CardTitle>
         </CardHeader>
         <CardContent>
-          <Popover>
+          <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
@@ -105,8 +107,11 @@ export function WorkoutList({
 
       <div className="lg:col-span-3">
         <Card>
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Workouts - {formatDateWithOrdinal(selectedDate)}</CardTitle>
+            <Link href="/dashboard/workout/new">
+              <Button>Log New Workout</Button>
+            </Link>
           </CardHeader>
           <CardContent>
             {isLoading ? (

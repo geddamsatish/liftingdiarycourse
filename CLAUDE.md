@@ -24,7 +24,7 @@ This is a **Lifting Diary** web application built with Next.js 16, React 19, Typ
 - Code standards and best practices
 
 **Available Documentation:**
-- `/docs/ui.md` — UI component standards, shadcn/ui usage, date formatting, styling rules
+- /docs/ui.md — UI Coding Standards
 - `/docs/data-fetching.md` — Server Component patterns, database querying, data isolation, security
 - `/docs/server-components.md` — Server Component coding standards, async params handling (Next.js 15 required patterns)
 - `/docs/auth.md` — Clerk authentication setup, user access patterns, security best practices
