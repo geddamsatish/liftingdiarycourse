@@ -4,12 +4,26 @@ import { WorkoutList } from "@/components/dashboard/workout-list";
 
 export const dynamic = "force-dynamic";
 
-export default async function DashboardPage() {
-  const today = new Date();
-  const initialWorkouts = await getWorkoutsByDate(today);
+interface DashboardPageProps {
+  searchParams: Promise<{ date?: string }>;
+}
+
+function parseDateParam(value: string | undefined): Date | null {
+  if (!value) return null;
+  const [year, month, day] = value.split("-").map(Number);
+  if (!year || !month || !day) return null;
+  return new Date(year, month - 1, day);
+}
+
+export default async function DashboardPage({
+  searchParams,
+}: DashboardPageProps) {
+  const { date } = await searchParams;
+  const initialDate = parseDateParam(date) ?? new Date();
+  const initialWorkouts = await getWorkoutsByDate(initialDate);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 p-4 md:p-8">
+    <div className="p-4 md:p-8">
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-900 dark:text-slate-50 mb-2">
@@ -22,7 +36,7 @@ export default async function DashboardPage() {
 
         <WorkoutList
           initialWorkouts={initialWorkouts}
-          initialDate={today}
+          initialDate={initialDate}
           onDateChange={fetchWorkoutsByDate}
         />
       </div>
